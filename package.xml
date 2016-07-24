@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>mouse_as_joystick</name>
+  <version>0.0.0</version>
+  <description>
+    Package to read from a specified mouse, and publish the data like a joystick
+  </description>
+
+  <author email="sjavdani@cmu.edu">Shervin Javdani</author>
+  <maintainer email="sjavdani@cmu.edu">Shervin Javdani</maintainer>
+
+
+  <license>TODO</license>
+  <buildtool_depend>catkin</buildtool_depend>
+
+
+  <depend>rospy</depend>
+
+</package>
