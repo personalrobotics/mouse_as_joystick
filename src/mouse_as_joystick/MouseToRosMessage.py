@@ -7,6 +7,11 @@ import rospy
 from sensor_msgs.msg import Joy
 import numpy as np
 
+import argparse
+
+from LinuxMouseHelpers import *
+
+
 
 joystick_data_topic = "/ada/joy"
 
@@ -16,7 +21,10 @@ joystick_data_topic = "/ada/joy"
 # xinput
 #find the device id of the mouse you want to disable. Then
 # xinput set-prop id "Device Enabled" 0
-mouse_filename = "/dev/input/mouse1"
+#default_mouse_filename = "/dev/input/mouse1"
+#default_mouse_id = 12
+
+
 
 class MouseData(object):
     max_joystick_dx = 1.
@@ -48,7 +56,8 @@ class MouseData(object):
 
 
 class MouseHandler(object):
-    def __init__(self):
+    def __init__(self, mouse_filename):
+       #print mouse_filename
        self.mouse_file = open(mouse_filename, "rb", )
        self.mouse_data_lock = threading.Lock()
        self.mouse_data = None
@@ -129,9 +138,33 @@ def MouseDataPublisher(mouse_handler):
 
 
 if __name__ == "__main__":
-    mouse_handler = MouseHandler()
+    parser = argparse.ArgumentParser(description="Wrapper to read from mouse and publish ros messages like a joystick")
+    parser.add_argument('-id', '--mouse-id', help='mouse id returned by xinput', type=str)
+    parser.add_argument('-num', '--mouse-num', help='mouse number given by X in /dev/input/mouseX', type=str)
+
+    args = parser.parse_args()
+
+    #load mouse id if specified, otherwise guess based on highest id number
+    if args.mouse_id:
+        mouse_id = int(args.mouse_id)
+    else:
+        mouse_id = get_mouse_process_id()
+
+    disable_mouse_by_id(mouse_id)
+
+    #find mouse filename to read from
+    if args.mouse_num:
+        mouse_filename = '/dev/input/mouse'+ (args.mouse_num)
+    else:
+        mouse_filename = get_mouse_filename_from_id(mouse_id)
+        
+    make_mouse_readable(mouse_filename)
+
+    #start loop to read data
+    mouse_handler = MouseHandler(mouse_filename)
     mouse_handler.getMouseData_StartLoop()
 
+    #create publisher loop
     try:
         MouseDataPublisher(mouse_handler)
     except rospy.ROSInterruptException:
