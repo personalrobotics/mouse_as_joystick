@@ -7,8 +7,6 @@ import rospy
 from sensor_msgs.msg import Joy
 import numpy as np
 
-max_joystick_dx = 40.
-max_joystick_dy = 40.
 
 joystick_data_topic = "/ada/joy"
 
@@ -21,6 +19,8 @@ joystick_data_topic = "/ada/joy"
 mouse_filename = "/dev/input/mouse1"
 
 class MouseData(object):
+    max_joystick_dx = 1.
+    max_joystick_dy = 1.
     def __init__(self, bLeft=0, bRight=0, bMiddle=0, x=0, y=0):
         self.bLeft = bLeft
         self.bRight = bRight
@@ -29,12 +29,21 @@ class MouseData(object):
         self.y = y
 
     def toJoyMsg(self):
-        return Joy(axes = np.array([float(self.x)/max_joystick_dx, float(self.y)/max_joystick_dy]), buttons=np.array([self.bLeft, self.bRight, self.bMiddle]))
+        return Joy(axes = np.array([float(self.x)/MouseData.max_joystick_dx, float(self.y)/MouseData.max_joystick_dy]), buttons=np.array([self.bLeft, self.bRight, self.bMiddle]))
 
+    def UpdateMaxValues(self):
+        if self.x > MouseData.max_joystick_dx:
+            MouseData.max_joystick_dx = self.x
+        elif -self.x > MouseData.max_joystick_dx:
+            MouseData.max_joystick_dx = -self.x
 
+        if self.y > MouseData.max_joystick_dy:
+            MouseData.max_joystick_dy = self.y
+        elif -self.y > MouseData.max_joystick_dy:
+            MouseData.max_joystick_dy = -self.y
 
     def __str__(self):
-        return "L: " + str(self.bLeft) + " M: " + str(self.bMiddle) + " R: " + str(self.bRight) + " x: " + str(self.x) + " y: " + str(self.y)
+        return "L: " + str(self.bLeft) + " M: " + str(self.bMiddle) + " R: " + str(self.bRight) + " x: " + str(self.x) + " y: " + str(self.y) + " max x: " + str(self.max_joystick_dx) + " max y: " + str(self.max_joystick_dy)
         #print ("L:%d, M: %d, R: %d, x: %d, y: %d\n" % (bLeft,bMiddle,bRight, x, y) );
 
 
@@ -64,6 +73,9 @@ class MouseHandler(object):
         else:
             self.num_times_nodata = 0
             self.mouse_data_last = mouse_data
+
+            #update max values we have seen
+            mouse_data.UpdateMaxValues()
         return mouse_data
 
 
@@ -126,25 +138,3 @@ if __name__ == "__main__":
         mouse_handler.close()
 
 
-
-
-
-# copied code from ros publisher 
-#import rospy
-#from std_msgs.msg import String
-#
-#def talker():
-#    pub = rospy.Publisher('chatter', String, queue_size=10)
-#    rospy.init_node('talker', anonymous=True)
-#    rate = rospy.Rate(10) # 10hz
-#    while not rospy.is_shutdown():
-#        hello_str = "hello world %s" % rospy.get_time()
-#        rospy.loginfo(hello_str)
-#        pub.publish(hello_str)
-#        rate.sleep()
-#
-#if __name__ == '__main__':
-#    try:
-#        talker()
-#    except rospy.ROSInterruptException:
-#        pass
