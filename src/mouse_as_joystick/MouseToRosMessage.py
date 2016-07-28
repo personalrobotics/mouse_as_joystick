@@ -7,8 +7,8 @@ import rospy
 from sensor_msgs.msg import Joy
 import numpy as np
 
-max_joystick_dx = 20.
-max_joystick_dy = 20.
+max_joystick_dx = 40.
+max_joystick_dy = 40.
 
 joystick_data_topic = "/ada/joy"
 
@@ -105,6 +105,7 @@ def MouseDataPublisher(mouse_handler):
     rate = rospy.Rate(50) # 10hz
     while not rospy.is_shutdown():
         mouse_data = mouse_handler.getMouseData()
+        print mouse_data
         mouse_data_rosmsg = mouse_data.toJoyMsg()
         mouse_data_rosmsg.header.stamp = rospy.Time.now()
         pub.publish(mouse_data_rosmsg)
