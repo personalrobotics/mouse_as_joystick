@@ -23,7 +23,7 @@ def make_mouse_readable(mouse_filename):
       subprocess.call('sudo chmod a+r ' + mouse_filename, shell=True)
 
 def get_mouse_process_id():
-    xinput_id_output = subprocess.check_output("xinput list | grep -Eo 'ouse\s*id\=[0-9]{1,2}' | grep -Eo '[0-9]{1,2}'", shell=True)
+    xinput_id_output = subprocess.check_output("xinput list | grep -Eo 'ouse.*id\=[0-9]{1,2}' | grep -Eo '[0-9]{1,2}'", shell=True)
     xinput_id_split = xinput_id_output.split("\n")
 
     #assume it is the last device id
