@@ -139,7 +139,7 @@ def MouseDataPublisher(mouse_handler):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Wrapper to read from mouse and publish ros messages like a joystick")
-    parser.add_argument('-id', '--mouse-id', help='mouse id returned by xinput', type=str)
+    parser.add_argument('-id', '--mouse-id', help='mouse id. Run xinput in a shell, and specify the id number of the mouse you want to connect to', type=str)
     parser.add_argument('-num', '--mouse-num', help='mouse number given by X in /dev/input/mouseX', type=str)
 
     args = parser.parse_args()

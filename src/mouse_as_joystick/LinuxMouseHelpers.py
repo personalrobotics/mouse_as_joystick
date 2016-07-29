@@ -6,7 +6,7 @@ def disable_mouse_by_id(id):
     subprocess.call('xinput -disable ' + str(id), shell=True)
 
 def get_mouse_filename_from_id(id):
-    print id
+    print "guessed mouse id: " + str(id)
     event_address_all = subprocess.check_output("xinput list-props " + str(id) + " | grep -Eo '/dev/input/.*[0-9]{1,2}'", shell=True).rstrip()
     event_address = event_address_all.split('/')[-1] # get last item
 
