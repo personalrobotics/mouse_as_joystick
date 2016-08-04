@@ -11,7 +11,7 @@ rosrun mouse_as_joystick MouseToRosMessage.py
 If that doesn't work, you may need to manually specify the device. To do so, in a terminal, run:
 
 ```
-$ xinput
+xinput
 ```
 
 And node the id number of the device you want to connect to. Now you can specify this to the package with 
